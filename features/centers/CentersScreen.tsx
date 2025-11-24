@@ -1,8 +1,11 @@
+
 import React, { useState } from 'react';
 import { CENTER_TYPES, MEDICAL_CENTERS } from '../../constants';
 import { LucideIcon, Ambulance, Hospital, Activity, FlaskConical as Flask, Stethoscope, Search, X, Phone, MapPin } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import ViewToggle from '../../components/ui/ViewToggle';
+import Skeleton from '../../components/ui/Skeleton';
+import { useLoading } from '../../hooks/useLoading';
 
 // Icon mapping
 const iconMap: Record<string, LucideIcon> = {
@@ -12,11 +15,12 @@ const iconMap: Record<string, LucideIcon> = {
 const CentersScreen: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [view, setView] = useState<'list' | 'map'>('list');
+  const isLoading = useLoading('centers-list', 1000);
 
   // If no type selected, show category list
   if (!selectedType) {
       return (
-          <div className="p-4 space-y-4">
+          <div className="p-4 space-y-4 animate-fadeIn">
               <h3 className="text-lg font-bold text-gray-800 mb-4">Tipos de Centros</h3>
               <div className="space-y-3">
                   {CENTER_TYPES.map(type => {
@@ -43,7 +47,7 @@ const CentersScreen: React.FC = () => {
   const filteredCenters = MEDICAL_CENTERS.filter(c => c.type === selectedType || selectedType === 'sanatorios');
 
   return (
-    <div className="bg-gray-50 min-h-full pb-20 relative">
+    <div className="bg-gray-50 min-h-full pb-32 relative animate-fadeIn">
        {/* Reusable View Toggle */}
        <ViewToggle view={view} setView={setView} />
 
@@ -98,51 +102,69 @@ const CentersScreen: React.FC = () => {
                     </div>
                 </div>
 
-                <p className="text-sm font-medium text-gray-800">Se encontraron ({filteredCenters.length}) Resultados</p>
+                {!isLoading && (
+                    <p className="text-sm font-medium text-gray-800">Se encontraron ({filteredCenters.length}) Resultados</p>
+                )}
             </div>
 
             {/* List */}
             <div className="space-y-3">
-                {filteredCenters.map(center => (
-                    <div key={center.id} className="bg-gray-100 rounded-lg p-4 relative">
-                        <h4 className="font-bold text-gray-900 text-sm uppercase">{center.name}</h4>
-                        <p className="text-xs text-gray-500 mt-1 uppercase">{center.address}</p>
-                        <p className="text-xs text-primary-800 mt-1 font-medium">{center.phone}</p>
-                        
-                        {center.notes && (
-                            <div className="mt-2">
-                                <p className="text-[10px] text-red-500 font-bold uppercase">*Obs.: {center.notes}</p>
-                                <p className="text-[10px] text-red-400 uppercase">NO CUBRE TOMOSINTESIS</p>
+                {isLoading ? (
+                    Array.from({ length: 3 }).map((_, i) => (
+                        <div key={i} className="bg-gray-100 rounded-lg p-4 relative space-y-2">
+                            <Skeleton variant="text" width="60%" height={16} />
+                            <Skeleton variant="text" width="40%" height={12} />
+                            <Skeleton variant="text" width="30%" height={12} />
+                            <div className="mt-2 flex gap-2">
+                                <Skeleton variant="rounded" width={60} height={20} />
                             </div>
-                        )}
-
-                        <div className="mt-3">
-                             <button className="bg-primary-900 text-white text-[10px] px-4 py-1.5 rounded-full font-medium">
-                                 Ver más
-                             </button>
                         </div>
+                    ))
+                ) : (
+                    filteredCenters.map(center => (
+                        <div key={center.id} className="bg-gray-100 rounded-lg p-4 relative">
+                            <h4 className="font-bold text-gray-900 text-sm uppercase">{center.name}</h4>
+                            <p className="text-xs text-gray-500 mt-1 uppercase">{center.address}</p>
+                            <p className="text-xs text-primary-800 mt-1 font-medium">{center.phone}</p>
+                            
+                            {center.notes && (
+                                <div className="mt-2">
+                                    <p className="text-[10px] text-red-500 font-bold uppercase">*Obs.: {center.notes}</p>
+                                    <p className="text-[10px] text-red-400 uppercase">NO CUBRE TOMOSINTESIS</p>
+                                </div>
+                            )}
 
-                        <div className="absolute bottom-4 right-4 flex gap-2">
-                            <button className="h-8 w-8 bg-primary-900 rounded-full flex items-center justify-center text-white shadow-lg">
-                                <Phone size={14} />
-                            </button>
-                            <button className="h-8 w-8 bg-yellow-400 rounded-full flex items-center justify-center text-primary-900 shadow-lg">
-                                <MapPin size={14} />
-                            </button>
-                        </div>
+                            <div className="mt-3">
+                                <button className="bg-primary-900 text-white text-[10px] px-4 py-1.5 rounded-full font-medium">
+                                    Ver más
+                                </button>
+                            </div>
 
-                        <div className="mt-2">
-                             <span className="bg-gray-300 text-gray-600 text-[9px] px-3 py-1 rounded-full uppercase font-bold">
-                                 {selectedType?.toUpperCase()}
-                             </span>
+                            <div className="absolute bottom-4 right-4 flex gap-2">
+                                <button className="h-8 w-8 bg-primary-900 rounded-full flex items-center justify-center text-white shadow-lg">
+                                    <Phone size={14} />
+                                </button>
+                                <button className="h-8 w-8 bg-yellow-400 rounded-full flex items-center justify-center text-primary-900 shadow-lg">
+                                    <MapPin size={14} />
+                                </button>
+                            </div>
+
+                            <div className="mt-2">
+                                <span className="bg-gray-300 text-gray-600 text-[9px] px-3 py-1 rounded-full uppercase font-bold">
+                                    {selectedType?.toUpperCase()}
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
-
-            <Button fullWidth className="mt-4 bg-primary-900 text-white rounded-full py-3 text-xs uppercase tracking-wider">
-               CARGAR MAS
-           </Button>
+        
+             {/* Fixed Bottom Button (Inside List View) */}
+            <div className="fixed bottom-[85px] left-0 right-0 mx-auto max-w-md p-4 bg-white border-t border-gray-100 z-40 shadow-sm">
+                <Button fullWidth disabled={isLoading}>
+                CARGAR MAS
+                </Button>
+            </div>
         </div>
        )}
     </div>

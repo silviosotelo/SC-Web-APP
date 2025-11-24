@@ -1,11 +1,14 @@
+
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { REQUEST_TYPES } from '../../constants';
-import { FileText, Shield, RefreshCw, Plane, Search, Upload, Image as ImageIcon } from 'lucide-react';
+import { FileText, Shield, RefreshCw, Plane, Upload, Image as ImageIcon } from 'lucide-react';
 import Button from '../../components/ui/Button';
 
 const iconMap: Record<string, any> = { FileText, Shield, RefreshCw, Plane };
 
 const RequestsScreen: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
 
   if (!selectedRequest) {
@@ -13,8 +16,11 @@ const RequestsScreen: React.FC = () => {
       <div className="p-4 space-y-4">
          <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg font-bold text-gray-800">Tipos de solicitudes</h3>
-            <button className="bg-teal-400 text-white px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
-               <FileText size={12} /> Ver mis Solicitudes
+            <button 
+              onClick={() => navigate('/my-requests')}
+              className="bg-teal-50 text-teal-700 border border-teal-200 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-teal-100 transition-colors"
+            >
+               <FileText size={14} /> Historial
             </button>
          </div>
 
@@ -41,7 +47,7 @@ const RequestsScreen: React.FC = () => {
 
   // Form View (Simulated for "Visaciones")
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-4 space-y-6 pb-32 animate-fadeIn">
        <div className="flex items-center gap-2 text-primary-900 font-bold text-lg">
            <div className="bg-primary-900 text-white p-1 rounded">
               <FileText size={16} />
@@ -98,11 +104,12 @@ const RequestsScreen: React.FC = () => {
            </div>
        </form>
 
-       <div className="flex justify-end pt-4">
-           <button className="bg-primary-900 text-white h-12 w-12 rounded-lg flex items-center justify-center shadow-lg">
-               <Upload size={24} />
-           </button>
-       </div>
+        {/* Fixed Bottom Button */}
+        <div className="fixed bottom-[85px] left-0 right-0 mx-auto max-w-md p-4 bg-white border-t border-gray-100 z-40 shadow-sm">
+             <Button fullWidth onClick={() => navigate('/my-requests')}>
+                ENVIAR SOLICITUD
+             </Button>
+        </div>
     </div>
   );
 };

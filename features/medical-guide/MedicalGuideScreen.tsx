@@ -1,14 +1,18 @@
+
 import React, { useState } from 'react';
 import { DOCTORS } from '../../constants';
 import { Search, X, Phone } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import ViewToggle from '../../components/ui/ViewToggle';
+import Skeleton from '../../components/ui/Skeleton';
+import { useLoading } from '../../hooks/useLoading';
 
 const MedicalGuideScreen: React.FC = () => {
   const [view, setView] = useState<'list' | 'map'>('list');
+  const isLoading = useLoading('medical-guide', 1200);
 
   return (
-    <div className="bg-gray-50 min-h-full pb-20 relative">
+    <div className="bg-gray-50 min-h-full pb-32 relative animate-fadeIn">
        {/* Reusable View Toggle */}
        <ViewToggle view={view} setView={setView} />
 
@@ -48,31 +52,50 @@ const MedicalGuideScreen: React.FC = () => {
                </div>
            </div>
 
-           <p className="text-sm font-medium text-gray-800">Se encontraron ({DOCTORS.length}) Resultados</p>
+           {!isLoading && (
+               <p className="text-sm font-medium text-gray-800">Se encontraron ({DOCTORS.length}) Resultados</p>
+           )}
 
            {/* Results List */}
            <div className="space-y-3">
-               {DOCTORS.map(doc => (
-                   <div key={doc.id} className="bg-gray-100 rounded-lg p-4 relative">
-                       <h4 className="font-bold text-gray-900 text-sm">{doc.name}</h4>
-                       <p className="text-xs text-gray-500 mt-1">{doc.location}</p>
-                       <p className="text-xs text-primary-800 mt-1 font-medium">+595212365636</p>
-                       
-                       <div className="mt-3 flex items-center justify-between">
-                           <span className="bg-gray-300 text-gray-600 text-[10px] px-3 py-1 rounded-full uppercase font-medium">
-                               {doc.specialty}
-                           </span>
-                           <button className="h-8 w-8 bg-primary-900 rounded-full flex items-center justify-center text-white shadow-lg">
-                               <Phone size={14} />
-                           </button>
+               {isLoading ? (
+                   Array.from({ length: 4 }).map((_, i) => (
+                       <div key={i} className="bg-gray-100 rounded-lg p-4 relative space-y-2">
+                           <Skeleton variant="text" width="60%" height={16} />
+                           <Skeleton variant="text" width="80%" height={12} />
+                           <Skeleton variant="text" width="40%" height={12} />
+                           <div className="flex justify-between items-center mt-2">
+                               <Skeleton variant="rounded" width={80} height={20} />
+                               <Skeleton variant="circular" width={32} height={32} />
+                           </div>
                        </div>
-                   </div>
-               ))}
+                   ))
+               ) : (
+                   DOCTORS.map(doc => (
+                       <div key={doc.id} className="bg-gray-100 rounded-lg p-4 relative">
+                           <h4 className="font-bold text-gray-900 text-sm">{doc.name}</h4>
+                           <p className="text-xs text-gray-500 mt-1">{doc.location}</p>
+                           <p className="text-xs text-primary-800 mt-1 font-medium">+595212365636</p>
+                           
+                           <div className="mt-3 flex items-center justify-between">
+                               <span className="bg-gray-300 text-gray-600 text-[10px] px-3 py-1 rounded-full uppercase font-medium">
+                                   {doc.specialty}
+                               </span>
+                               <button className="h-8 w-8 bg-primary-900 rounded-full flex items-center justify-center text-white shadow-lg">
+                                   <Phone size={14} />
+                               </button>
+                           </div>
+                       </div>
+                   ))
+               )}
            </div>
+       </div>
 
-           <Button fullWidth className="mt-4 bg-primary-900 text-white rounded-full py-3 text-xs uppercase tracking-wider">
+       {/* Fixed Bottom Button */}
+       <div className="fixed bottom-[85px] left-0 right-0 mx-auto max-w-md p-4 bg-white border-t border-gray-100 z-40 shadow-sm">
+            <Button fullWidth disabled={isLoading}>
                CARGAR MAS
-           </Button>
+            </Button>
        </div>
     </div>
   );

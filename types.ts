@@ -1,3 +1,4 @@
+
 export enum AppointmentMode {
   InPerson = 'PRESENCIAL',
   Telemedicine = 'TELEMEDICINA'
@@ -46,4 +47,41 @@ export interface AppointmentDraft {
   timeSlotId: string | null;
   email: string;
   phone: string;
+}
+
+export interface Invoice {
+  id: string;
+  date: string;
+  amount: string;
+  rawValue: number;
+  status: 'PENDIENTE' | 'PAGADO' | 'CANCELADO';
+  pending: boolean;
+}
+
+export interface AppNotification {
+  id: string;
+  title: string;
+  message: string;
+  date: string;
+  read: boolean;
+  type: 'appointment' | 'payment' | 'system';
+}
+
+export interface MyAppointment {
+  id: string;
+  doctorName: string;
+  specialty: string;
+  date: string;
+  time: string;
+  location: string;
+  status: 'confirmed' | 'cancelled' | 'completed';
+  patientName: string;
+}
+
+export interface MyRequest {
+  id: string;
+  type: string;
+  date: string;
+  status: 'pending' | 'approved' | 'rejected';
+  description: string;
 }

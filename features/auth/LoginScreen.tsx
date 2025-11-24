@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/ui/Button';
@@ -36,7 +37,8 @@ const LoginScreen: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Nro. de Cédula</label>
               <input 
                 type="text" 
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
+                disabled={loading}
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all disabled:bg-gray-100 disabled:text-gray-400"
                 placeholder="Ej: 1.234.567"
                 required
               />
@@ -44,8 +46,9 @@ const LoginScreen: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
               <input 
-                type="password" 
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
+                type="password"
+                disabled={loading} 
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all disabled:bg-gray-100 disabled:text-gray-400"
                 placeholder="••••••••"
                 required
               />

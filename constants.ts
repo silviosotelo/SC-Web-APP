@@ -1,9 +1,10 @@
-import { Doctor, FamilyMember, MenuItem, TimeSlot } from './types';
+
+import { Doctor, FamilyMember, MenuItem, TimeSlot, Invoice, AppNotification, MyAppointment, MyRequest } from './types';
 import { 
   FileText, Users, Calendar, MapPin, 
   Stethoscope, Activity, CreditCard, 
-  Shield, FileClock, Phone, Camera, Gift,
-  Search, Plane, RefreshCw, Pill, ClipboardList
+  Shield, Gift, Camera,
+  Ambulance, Hospital, FlaskConical as Flask, Plane, RefreshCw
 } from 'lucide-react';
 
 export const FAMILY_MEMBERS: FamilyMember[] = [
@@ -115,10 +116,11 @@ export const MEDICAL_CENTERS = [
   { id: 'eme', name: 'E.M.E - EQUIPO MEDICO DE EMERGENCIAS', address: 'ESPAÑA 1569 C/ AYALA VELAZQUEZ', phone: '+595214180001', type: 'ambulancia' }
 ];
 
-export const INVOICES = [
-  { id: '10020060452', date: '17 de noviembre 2025', amount: '130.000.0', status: 'PENDIENTE', pending: true },
-  { id: '10020058599', date: '20 de octubre 2025', amount: '0.0', status: 'CANCELADO', pending: false },
-  { id: '10020056001', date: '19 de septiembre 2025', amount: '0.0', status: 'CANCELADO', pending: false },
+export const INVOICES: Invoice[] = [
+  { id: '10020060452', date: '17 de noviembre 2025', amount: '130.000', rawValue: 130000, status: 'PENDIENTE', pending: true },
+  { id: '10020058599', date: '20 de octubre 2025', amount: '0', rawValue: 0, status: 'PAGADO', pending: false },
+  { id: '10020056001', date: '19 de septiembre 2025', amount: '0', rawValue: 0, status: 'PAGADO', pending: false },
+  { id: '10020056002', date: '19 de agosto 2025', amount: '130.000', rawValue: 130000, status: 'PENDIENTE', pending: true },
 ];
 
 export const REQUEST_TYPES = [
@@ -126,4 +128,29 @@ export const REQUEST_TYPES = [
   { id: 'cobertura', label: 'Cobertura para Internación', iconName: 'Shield' },
   { id: 'reintegros', label: 'Reintegros', iconName: 'RefreshCw' },
   { id: 'asistencia', label: 'Asistencia al viajero', iconName: 'Plane' },
+];
+
+export const ANALYSIS_RESULTS = [
+    { id: 1, origin: 'CBC', date: '13/06/2024 08:01:14' },
+    { id: 2, origin: 'CBC', date: '22/08/2024 14:23:05' },
+];
+
+// NEW CONSTANTS
+
+export const NOTIFICATIONS: AppNotification[] = [
+  { id: '1', title: 'Recordatorio de Turno', message: 'Tienes un turno con Dr. Candia mañana a las 08:00 AM.', date: 'Hace 1 hora', read: false, type: 'appointment' },
+  { id: '2', title: 'Factura Vencida', message: 'Tu factura del mes de Noviembre ha vencido.', date: 'Hace 1 día', read: false, type: 'payment' },
+  { id: '3', title: 'Bienvenido', message: 'Gracias por utilizar la nueva app de Santa Clara.', date: 'Hace 5 días', read: true, type: 'system' }
+];
+
+export const MY_APPOINTMENTS: MyAppointment[] = [
+  { id: '1', doctorName: 'Dr. Candia Irala, Jose Carlos', specialty: 'Cardiología', date: '20/08/2025', time: '08:00 AM', location: 'Sanatorio Británico', status: 'confirmed', patientName: 'Jose Luis Fernando' },
+  { id: '2', doctorName: 'Dra. Montefilpo Galeano', specialty: 'Clínica Médica', date: '15/06/2025', time: '10:30 AM', location: 'Sanatorio Británico', status: 'completed', patientName: 'Jose Luis Fernando' },
+  { id: '3', doctorName: 'Dr. Delmas Barchello', specialty: 'Pediatría', date: '10/03/2025', time: '02:00 PM', location: 'Sanatorio Las Lomas', status: 'cancelled', patientName: 'Massimiliano Agustin' },
+];
+
+export const MY_REQUESTS: MyRequest[] = [
+  { id: 'REQ-001', type: 'Visación', date: '19/08/2025', status: 'pending', description: 'Estudio de Resonancia Magnética' },
+  { id: 'REQ-002', type: 'Reintegro', date: '10/07/2025', status: 'approved', description: 'Consulta particular Dr. Perez' },
+  { id: 'REQ-003', type: 'Cobertura', date: '05/05/2025', status: 'rejected', description: 'Internación programada' },
 ];

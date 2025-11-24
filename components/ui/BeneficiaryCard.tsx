@@ -1,78 +1,83 @@
 import React from 'react';
-import { FamilyMember } from '../../types';
 import { User, Check } from 'lucide-react';
+import { FamilyMember } from '../../types';
 
 interface BeneficiaryCardProps {
   member: FamilyMember;
   isSelected?: boolean;
   onClick?: () => void;
-  showStatus?: boolean; // For Digital Card (shows "Active since...")
-  variant?: 'display' | 'selection'; // 'display' for Carnet, 'selection' for Booking
+  disabled?: boolean;
+  subtitle?: string; // Texto adicional opcional (ej: "Activo desde...")
+  showCheck?: boolean; // Forzar mostrar el check aunque no esté seleccionado (para listas informativas)
+  badges?: React.ReactNode; // New prop for custom status badges
 }
 
 const BeneficiaryCard: React.FC<BeneficiaryCardProps> = ({ 
   member, 
   isSelected = false, 
   onClick, 
-  showStatus = false,
-  variant = 'display'
+  disabled = false,
+  subtitle,
+  showCheck = true,
+  badges
 }) => {
-  const isSelectionMode = variant === 'selection';
+  // Estilos dinámicos basados en selección y estado
+  const containerBase = "relative p-4 rounded-2xl border-2 transition-all duration-200 flex items-center gap-4 w-full text-left";
   
-  // Determine Active/Selected state visualization
-  // In Selection Mode: active if isSelected is true
-  // In Display Mode: active if member.status === 'active'
-  const isActive = isSelectionMode ? isSelected : member.status === 'active';
+  const stateStyles = disabled 
+    ? "bg-gray-50 border-gray-100 opacity-60 cursor-not-allowed"
+    : isSelected
+      ? "bg-secondary-50 border-secondary-500 ring-0" // Estilo 'Verde' seleccionado
+      : "bg-white border-gray-100 hover:border-gray-200 cursor-pointer active:scale-[0.99]"; // Estilo Normal
 
-  // Container Styles
-  // selection mode uses background color when selected.
-  // display mode stays white but maintains border consistency.
-  const containerClasses = isSelectionMode && isActive
-    ? 'bg-secondary-50 border-secondary-500 ring-1 ring-secondary-500' 
-    : 'bg-white border-gray-100 shadow-sm hover:border-gray-200';
+  const avatarBase = "h-12 w-12 rounded-full flex items-center justify-center border-2 shrink-0 transition-colors";
+  const avatarStyles = isSelected 
+    ? "bg-secondary-100 text-secondary-700 border-secondary-200" 
+    : "bg-primary-50 text-primary-700 border-primary-100";
 
   return (
-    <div 
-      onClick={onClick}
-      className={`
-        relative p-4 rounded-2xl border flex items-center gap-4 transition-all duration-200
-        ${onClick ? 'cursor-pointer active:scale-[0.98]' : ''}
-        ${containerClasses}
-      `}
+    <button 
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      className={`${containerBase} ${stateStyles}`}
     >
       {/* Avatar */}
-      <div className={`
-        h-12 w-12 rounded-full flex items-center justify-center border-2 shrink-0
-        ${isActive ? 'bg-secondary-100 text-secondary-700 border-secondary-200' : 'bg-primary-50 text-primary-700 border-primary-100'}
-      `}>
-        <User size={24} />
+      <div className={`${avatarBase} ${avatarStyles}`}>
+        <User size={24} strokeWidth={2} />
       </div>
 
       {/* Info Column */}
       <div className="flex-1 min-w-0">
-        <h3 className={`font-bold text-sm truncate ${isActive && isSelectionMode ? 'text-secondary-900' : 'text-gray-900'}`}>
+        <h3 className={`font-bold text-sm truncate ${isSelected ? 'text-secondary-900' : 'text-gray-900'}`}>
           {member.name}
         </h3>
         <div className="flex flex-col gap-0.5 mt-1">
           <p className="text-xs text-gray-500 font-medium">C.I. {member.documentId}</p>
-          {showStatus && member.lastActivation && (
-            <p className="text-[10px] text-secondary-600 flex items-center gap-1 font-semibold">
-              Activo desde: {member.lastActivation.split(' ')[0]}
-            </p>
+          {/* Subtítulo opcional (ej: fechas, relación) */}
+          {(subtitle || member.relation) && (
+             <p className="text-[11px] text-gray-400 font-medium">
+               {subtitle || member.relation}
+             </p>
           )}
+          {/* Custom Badges */}
+          {badges && <div className="mt-1 flex flex-wrap gap-1">{badges}</div>}
         </div>
       </div>
 
-      {/* Right Action/Status Icon - UNIFIED STYLE */}
-      <div className="shrink-0">
-        <div className={`
-             h-7 w-7 rounded-full flex items-center justify-center transition-colors
-             ${isActive ? 'bg-secondary-500 text-white shadow-sm' : 'bg-gray-100 text-gray-300'}
-           `}>
-             <Check size={16} strokeWidth={3} />
+      {/* Selection/Status Indicator */}
+      {showCheck && (
+        <div className="shrink-0">
+          <div className={`
+               h-7 w-7 rounded-full flex items-center justify-center transition-all duration-200
+               ${isSelected 
+                  ? 'bg-secondary-500 text-white shadow-sm scale-100' 
+                  : 'bg-gray-100 text-gray-300 scale-90'}
+             `}>
+               <Check size={16} strokeWidth={3} />
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </button>
   );
 };
 
